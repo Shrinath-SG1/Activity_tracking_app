@@ -3,28 +3,39 @@ import 'package:activity_tracking/common/app_strings.dart';
 import 'package:activity_tracking/common_widgets/gradient_button.dart';
 import 'package:activity_tracking/common_widgets/social_media_signup_button.dart';
 import 'package:activity_tracking/home/home.dart';
+import 'package:activity_tracking/login_page/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'custom_clipper.dart';
+import 'package:page_transition/page_transition.dart';
 
-class SignUpPage extends StatefulWidget{
+import 'custom_clipper.dart';
+import 'login_page.dart';
+
+class SignUpPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return SignUpPageState();
   }
 }
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final String title = 'Registration';
+class SignUpPageState extends State<SignUpPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-class SignUpPageState extends State<SignUpPage>{
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _passwordVisible = true;
+  final _formKey=GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _success;
   String _userEmail;
-  bool _passwordVisible=true;
+
+  String validateInput(String value){
+      if (value.isEmpty) {
+        return AppStrings.EnterSomething;
+      }
+      return null;
+
+  }
 
   void _register() async {
     final FirebaseUser user = (await
@@ -37,20 +48,13 @@ class SignUpPageState extends State<SignUpPage>{
       setState(() {
         _success = true;
         _userEmail = user.email;
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
       });
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
     } else {
       setState(() {
         _success = true;
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 
   @override
@@ -67,7 +71,7 @@ class SignUpPageState extends State<SignUpPage>{
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primaryBlue,AppColors.secondaryBlue],
+                      colors: [AppColors.primaryBlue, AppColors.secondaryBlue],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -93,57 +97,88 @@ class SignUpPageState extends State<SignUpPage>{
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 2),
                             ),
-                            Text(
-                              AppStrings.Login1,
-                              style: TextStyle(fontSize: 24),
+                            InkWell(
+                              onTap: () => Navigator.pushReplacement(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.leftToRight,
+                                      child: LoginPage())),
+                              child: Text(
+                                AppStrings.Login1,
+                                style: TextStyle(fontSize: 24),
+                              ),
                             ),
                           ]),
                       SizedBox(
                         height: height * 0.04,
                       ),
-                      TextField(
-                        decoration: InputDecoration(
-                            labelText: AppStrings.EmailIdMobileNumber,
-                            prefixIcon: Icon(Icons.account_circle,color: Colors.black,)),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                            labelText: AppStrings.EmailId,
-                            prefixIcon: Icon(Icons.email,color: Colors.black,)),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                            labelText: AppStrings.MobileNumber,
-                            prefixIcon: Icon(Icons.phone,color: Colors.black,)),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: AppStrings.Password,
-                          prefixIcon: Icon(Icons.lock,color: Colors.black,),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.black54,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
+                      Form(
+                        key: _formKey,
+                          child: Column(
+                        children: [
+                          TextFormField(
+                           // validator: validateInput,
+                            decoration: InputDecoration(
+                                labelText: AppStrings.EmailIdMobileNumber,
+                                prefixIcon: Icon(
+                                  Icons.account_circle,
+                                  color: Colors.black,
+                                )),
                           ),
-                        ),
-                      ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          TextFormField(
+                            controller: _emailController,
+                            validator: validateInput,
+                            decoration: InputDecoration(
+                                labelText: AppStrings.EmailId,
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: Colors.black,
+                                )),
+                          ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          TextFormField(
+                           // validator: validateInput,
+                            decoration: InputDecoration(
+                                labelText: AppStrings.MobileNumber,
+                                prefixIcon: Icon(
+                                  Icons.phone,
+                                  color: Colors.black,
+                                )),
+                          ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          TextFormField(
+                            validator: validateInput,
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                              labelText: AppStrings.Password,
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Colors.black,
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.black54,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -153,7 +188,19 @@ class SignUpPageState extends State<SignUpPage>{
                           ),
                         )
                       ]),
-                      CustomGradientButton(AppStrings.LoginButtonText),
+                      CustomGradientButton(
+                        AppStrings.LoginButtonText,
+                        () {
+                          if(_formKey.currentState.validate()){
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => HomeScreen()),
+                            // );
+                            _register();
+                          }
+                        },
+                      ),
                       Container(
                         alignment: Alignment.center,
                         child: Text(_success == null
