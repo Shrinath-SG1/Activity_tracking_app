@@ -2,18 +2,21 @@ import 'package:activity_tracking/common/app_colors.dart';
 import 'package:activity_tracking/common/app_strings.dart';
 import 'package:activity_tracking/common_widgets/gradient_button.dart';
 import 'package:activity_tracking/common_widgets/social_media_signup_button.dart';
-import 'package:activity_tracking/login_page/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
+
 import 'custom_clipper.dart';
 
-class LoginPage extends StatefulWidget {
+class SignUpPage extends StatefulWidget{
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<StatefulWidget> createState() {
+    return SignUpPageState();
+  }
 }
 
-class _LoginPageState extends State<LoginPage> {
-  bool _passwordVisible = true;
+class SignUpPageState extends State<SignUpPage>{
 
+  bool _passwordVisible=true;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -48,29 +51,40 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              AppStrings.Login,
+                              AppStrings.SignUp1,
                               style: TextStyle(
                                   fontSize: 35,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 2),
                             ),
-                            InkWell(
-                              onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpPage()));
-                              },
-                              child: Text(
-                                AppStrings.SignUp,
-                                style: TextStyle(fontSize: 24),
-                              ),
+                            Text(
+                              AppStrings.Login1,
+                              style: TextStyle(fontSize: 24),
                             ),
                           ]),
                       SizedBox(
-                        height: height * 0.08,
+                        height: height * 0.04,
                       ),
                       TextField(
                         decoration: InputDecoration(
                             labelText: AppStrings.EmailIdMobileNumber,
-                            prefixIcon: Icon(Icons.account_circle)),
+                            prefixIcon: Icon(Icons.account_circle,color: Colors.black,)),
+                      ),
+                      SizedBox(
+                        height: height * 0.02,
+                      ),
+                      TextField(
+                        decoration: InputDecoration(
+                            labelText: AppStrings.EmailId,
+                            prefixIcon: Icon(Icons.email,color: Colors.black,)),
+                      ),
+                      SizedBox(
+                        height: height * 0.02,
+                      ),
+                      TextField(
+                        decoration: InputDecoration(
+                            labelText: AppStrings.MobileNumber,
+                            prefixIcon: Icon(Icons.phone,color: Colors.black,)),
                       ),
                       SizedBox(
                         height: height * 0.02,
@@ -78,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                       TextField(
                         decoration: InputDecoration(
                           labelText: AppStrings.Password,
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock,color: Colors.black,),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible
@@ -104,9 +118,6 @@ class _LoginPageState extends State<LoginPage> {
                         )
                       ]),
                       CustomGradientButton(AppStrings.LoginButtonText),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
                       Text(AppStrings.OR),
                       SizedBox(
                         height: height * 0.02,
@@ -135,4 +146,5 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
 }

@@ -36,8 +36,8 @@ CustomGradientButton(this.text);
       margin: EdgeInsets.only(
           left: height * 0.04,
           right: height * 0.04,
-          top: height * 0.05,
-          bottom: height * 0.05),
+          top: height * 0.03,
+          bottom: height * 0.02),
     );
   }
 }
