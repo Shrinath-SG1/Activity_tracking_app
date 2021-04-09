@@ -1,10 +1,13 @@
 import 'package:activity_tracking/common/app_colors.dart';
 import 'package:activity_tracking/common/app_strings.dart';
+import 'package:activity_tracking/common_widgets/facebook_button.dart';
+import 'package:activity_tracking/common_widgets/google_button.dart';
 import 'package:activity_tracking/common_widgets/gradient_button.dart';
-import 'package:activity_tracking/common_widgets/social_media_signup_button.dart';
 import 'package:activity_tracking/login_page/sign_up.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+
 import 'custom_clipper.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,6 +26,13 @@ class _LoginPageState extends State<LoginPage> {
     }
     return null;
 
+  }
+  void initState() {
+    super.initState();
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      setState(() {});
+    });
   }
 
   @override
@@ -155,14 +165,12 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SocialMediaButton(
-                            image: AppStrings.FaceBookImg,
-                            text: AppStrings.FaceBook,
-                          ),
-                          SocialMediaButton(
-                            image: AppStrings.GoogleImg,
-                            text: AppStrings.Google,
-                          ),
+                          FaceBookSignInButton(),
+                          GoogleSignInButton(),
+                          // SocialMediaButton(
+                          //   image: AppStrings.GoogleImg,
+                          //   text: AppStrings.Google,
+                          // ),
                         ],
                       )
                     ],
