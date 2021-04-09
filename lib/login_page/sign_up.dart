@@ -2,9 +2,9 @@ import 'package:activity_tracking/common/app_colors.dart';
 import 'package:activity_tracking/common/app_strings.dart';
 import 'package:activity_tracking/common_widgets/gradient_button.dart';
 import 'package:activity_tracking/common_widgets/social_media_signup_button.dart';
+import 'package:activity_tracking/home/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
-
 import 'custom_clipper.dart';
 
 class SignUpPage extends StatefulWidget{
@@ -14,9 +14,45 @@ class SignUpPage extends StatefulWidget{
   }
 }
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final String title = 'Registration';
+
 class SignUpPageState extends State<SignUpPage>{
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _success;
+  String _userEmail;
   bool _passwordVisible=true;
+
+  void _register() async {
+    final FirebaseUser user = (await
+    _auth.createUserWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    )
+    ).user;
+    if (user != null) {
+      setState(() {
+        _success = true;
+        _userEmail = user.email;
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+      });
+    } else {
+      setState(() {
+        _success = true;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -118,6 +154,14 @@ class SignUpPageState extends State<SignUpPage>{
                         )
                       ]),
                       CustomGradientButton(AppStrings.LoginButtonText),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Text(_success == null
+                            ? ''
+                            : (_success
+                            ? 'Successfully registered ' + _userEmail
+                            : 'Registration failed')),
+                      ),
                       Text(AppStrings.OR),
                       SizedBox(
                         height: height * 0.02,
@@ -146,5 +190,4 @@ class SignUpPageState extends State<SignUpPage>{
       ),
     );
   }
-
 }
