@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 class CustomGradientButton extends StatelessWidget {
+  final VoidCallback onPress;
 final String text;
-CustomGradientButton(this.text);
+CustomGradientButton(this.text,this.onPress);
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -24,7 +25,7 @@ CustomGradientButton(this.text);
       child: FlatButton(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18)),
-          onPressed: () {},
+          onPressed: onPress,
           child: Text(
             text,
             style: TextStyle(

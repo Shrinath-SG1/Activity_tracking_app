@@ -4,6 +4,7 @@ import 'package:activity_tracking/common_widgets/gradient_button.dart';
 import 'package:activity_tracking/common_widgets/social_media_signup_button.dart';
 import 'package:activity_tracking/login_page/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'custom_clipper.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,7 +13,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = true;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  String validateInput(String value){
+    if (value.isEmpty) {
+      return AppStrings.EnterSomething;
+    }
+    return null;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primaryBlue,AppColors.secondaryBlue],
+                      colors: [AppColors.primaryBlue, AppColors.secondaryBlue],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -55,9 +66,11 @@ class _LoginPageState extends State<LoginPage> {
                                   letterSpacing: 2),
                             ),
                             InkWell(
-                              onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpPage()));
-                              },
+                              onTap: () => Navigator.pushReplacement(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.rightToLeft,
+                                      child: SignUpPage())),
                               child: Text(
                                 AppStrings.SignUp,
                                 style: TextStyle(fontSize: 24),
@@ -67,33 +80,49 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: height * 0.08,
                       ),
-                      TextField(
-                        decoration: InputDecoration(
-                            labelText: AppStrings.EmailIdMobileNumber,
-                            prefixIcon: Icon(Icons.account_circle)),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: AppStrings.Password,
-                          prefixIcon: Icon(Icons.lock),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.black54,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
+                      Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                validator: validateInput,
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                    labelText: AppStrings.EmailIdMobileNumber,
+                                    prefixIcon: Icon(
+                                      Icons.account_circle,
+                                      color: Colors.black,
+                                    )),
+                              ),
+                              SizedBox(
+                                height: height * 0.02,
+                              ),
+                              TextFormField(
+                                validator:validateInput,
+                                controller: _passwordController,
+                                decoration: InputDecoration(
+                                  labelText: AppStrings.Password,
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: Colors.black,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.black54,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _passwordVisible = !_passwordVisible;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -103,7 +132,18 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         )
                       ]),
-                      CustomGradientButton(AppStrings.LoginButtonText),
+                      CustomGradientButton(
+                        AppStrings.LoginButtonText,
+                        () {
+                          if(_formKey.currentState.validate()){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUpPage()),
+                            );
+                          }
+                        },
+                      ),
                       SizedBox(
                         height: height * 0.02,
                       ),
