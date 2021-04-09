@@ -29,9 +29,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   hexcolor:
+  firebase_dynamic_links: ^0.5.1
   animations:
   page_transition:
-  firebase_auth:
+  firebase_auth: ^0.14.0+5
   firebase_core:
   google_sign_in:
 

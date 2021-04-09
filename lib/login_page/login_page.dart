@@ -4,7 +4,6 @@ import 'package:activity_tracking/common_widgets/facebook_button.dart';
 import 'package:activity_tracking/common_widgets/google_button.dart';
 import 'package:activity_tracking/common_widgets/gradient_button.dart';
 import 'package:activity_tracking/login_page/sign_up.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -26,13 +25,6 @@ class _LoginPageState extends State<LoginPage> {
     }
     return null;
 
-  }
-  void initState() {
-    super.initState();
-    Firebase.initializeApp().whenComplete(() {
-      print("completed");
-      setState(() {});
-    });
   }
 
   @override

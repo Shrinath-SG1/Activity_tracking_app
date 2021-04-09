@@ -3,11 +3,13 @@ import 'package:activity_tracking/common/app_strings.dart';
 import 'package:activity_tracking/common_widgets/facebook_button.dart';
 import 'package:activity_tracking/common_widgets/google_button.dart';
 import 'package:activity_tracking/common_widgets/gradient_button.dart';
+import 'package:activity_tracking/home/home.dart';
 import 'package:activity_tracking/login_page/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-
 import 'custom_clipper.dart';
+import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -17,8 +19,15 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage> {
+ final FirebaseAuth _auth = FirebaseAuth.instance;
+
   bool _passwordVisible = true;
   final _formKey=GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _success;
+  String _userEmail;
 
   String validateInput(String value){
       if (value.isEmpty) {
@@ -27,6 +36,27 @@ class SignUpPageState extends State<SignUpPage> {
       return null;
 
   }
+
+  void _register() async {
+    final FirebaseUser user = (await
+    _auth.createUserWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    )
+    ).user;
+    if (user != null) {
+      setState(() {
+        _success = true;
+        _userEmail = user.email;
+      });
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+    } else {
+      setState(() {
+        _success = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -99,6 +129,7 @@ class SignUpPageState extends State<SignUpPage> {
                             height: height * 0.02,
                           ),
                           TextFormField(
+                            controller: _emailController,
                             validator: validateInput,
                             decoration: InputDecoration(
                                 labelText: AppStrings.EmailId,
@@ -111,7 +142,7 @@ class SignUpPageState extends State<SignUpPage> {
                             height: height * 0.02,
                           ),
                           TextFormField(
-                            validator: validateInput,
+                           // validator: validateInput,
                             decoration: InputDecoration(
                                 labelText: AppStrings.MobileNumber,
                                 prefixIcon: Icon(
@@ -124,6 +155,7 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                           TextFormField(
                             validator: validateInput,
+                            controller: _passwordController,
                             decoration: InputDecoration(
                               labelText: AppStrings.Password,
                               prefixIcon: Icon(
@@ -160,13 +192,22 @@ class SignUpPageState extends State<SignUpPage> {
                         AppStrings.LoginButtonText,
                         () {
                           if(_formKey.currentState.validate()){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginPage()),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => HomeScreen()),
+                            // );
+                            _register();
                           }
                         },
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Text(_success == null
+                            ? ''
+                            : (_success
+                            ? 'Successfully registered ' + _userEmail
+                            : 'Registration failed')),
                       ),
                       Text(AppStrings.OR),
                       SizedBox(
